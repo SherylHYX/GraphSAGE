@@ -24,10 +24,17 @@ def run_regression(train_embeds, train_labels, test_embeds, test_labels):
     log.fit(train_embeds, train_labels)
 
     f1 = 0
+    f1_full = []
+    f1_baseline_full = []
     for i in range(test_labels.shape[1]):
-        print("F1 score", f1_score(test_labels[:,i], log.predict(test_embeds)[:,i], average="micro"))
+        f1 = f1_score(test_labels[:,i], log.predict(test_embeds)[:,i], average="micro")
+        f1_full.append(f1)
+        # print("F1 score", f1)
     for i in range(test_labels.shape[1]):
-        print("Random baseline F1 score", f1_score(test_labels[:,i], dummy.predict(test_embeds)[:,i], average="micro"))
+        f1_baseline = f1_score(test_labels[:,i], dummy.predict(test_embeds)[:,i], average="micro")
+        f1_baseline_full.append(f1_baseline)
+        # print("Random baseline F1 score", f1_baseline)
+    print("F1 and F1 baseline are {} and {} respectively.".format(np.mean(f1_full),np.mean(f1_baseline_full)))
 
 if __name__ == '__main__':
     parser = ArgumentParser("Run evaluation on PPI data.")
@@ -42,7 +49,7 @@ if __name__ == '__main__':
     print("Loading data...")
     G = json_graph.node_link_graph(json.load(open(dataset_dir + "/ppi-G.json")))
     labels = json.load(open(dataset_dir + "/ppi-class_map.json"))
-    labels = {int(i):l for i, l in labels.iteritems()}
+    labels = {int(i):l for i, l in labels.items()}
     
     train_ids = [n for n in G.nodes() if not G.node[n]['val'] and not G.node[n]['test']]
     test_ids = [n for n in G.nodes() if G.node[n][setting]]
@@ -59,7 +66,7 @@ if __name__ == '__main__':
         feats[:,0] = np.log(feats[:,0]+1.0)
         feats[:,1] = np.log(feats[:,1]-min(np.min(feats[:,1]), -1))
         feat_id_map = json.load(open(dataset_dir + "/ppi-id_map.json"))
-        feat_id_map = {int(id):val for id,val in feat_id_map.iteritems()}
+        feat_id_map = {int(id):val for id,val in feat_id_map.items()}
         train_feats = feats[[feat_id_map[id] for id in train_ids]] 
         test_feats = feats[[feat_id_map[id] for id in test_ids]] 
         print("Running regression..")

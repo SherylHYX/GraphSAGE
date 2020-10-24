@@ -46,8 +46,8 @@ if __name__ == '__main__':
         ## Logistic gets thrown off by big counts, so log transform num comments and score
         feats[:,0] = np.log(feats[:,0]+1.0)
         feats[:,1] = np.log(feats[:,1]-min(np.min(feats[:,1]), -1))
-        feat_id_map = json.load(open(dataset_dir + "reddit-id_map.json"))
-        feat_id_map = {id:val for id,val in feat_id_map.iteritems()}
+        feat_id_map = json.load(open(dataset_dir + "/reddit-id_map.json"))
+        feat_id_map = {id:val for id,val in feat_id_map.items()}
         train_feats = feats[[feat_id_map[id] for id in train_ids]] 
         test_feats = feats[[feat_id_map[id] for id in test_ids]] 
         print("Running regression..")
@@ -79,7 +79,7 @@ if __name__ == '__main__':
         # loading feats
         feats = np.load(dataset_dir + "/reddit-feats.npy")
         feat_id_map = json.load(open(dataset_dir + "/reddit-id_map.json"))
-        feat_id_map = {id:val for id,val in feat_id_map.iteritems()}
+        feat_id_map = {id:val for id,val in feat_id_map.items()}
         train_feats = feats[[feat_id_map[id] for id in train_ids]] 
         test_feats = feats[[feat_id_map[id] for id in test_ids]] 
         train_embeds = np.hstack([train_feats, train_embeds])
